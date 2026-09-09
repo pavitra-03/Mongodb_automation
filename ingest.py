@@ -1,6 +1,6 @@
 import os
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 import dns.resolver
 from pymongo import MongoClient
 from faker import Faker
@@ -34,7 +34,7 @@ def run_mock_ingestion():
         severities = ["low", "medium", "high", "critical"]
         statuses = ["open", "closed", "resolved", "investigating"]
 
-        # Generate 5 records
+        # Generate 5 records with current UTC timestamp
         for _ in range(5):
             mock_records.append({
                 "product": random.choice(products),
@@ -42,7 +42,7 @@ def run_mock_ingestion():
                 "status": random.choice(statuses),
                 "source_ip": fake.ipv4(),
                 "user": fake.user_name(),
-                "timestamp": datetime.utcnow()
+                "timestamp": datetime.now(timezone.utc)  # Updated to fetch exact current time
             })
 
         print("Ingesting records into SecurityDB.logs...")
