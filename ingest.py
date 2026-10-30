@@ -34,7 +34,10 @@ def run_mock_ingestion():
         severities = ["low", "medium", "high", "critical"]
         statuses = ["open", "closed", "resolved", "investigating"]
 
-        # Generate 5 records with current UTC timestamp
+        # Capture the current UTC timestamp ONCE so all 5 records have the exact same date & time
+        run_timestamp = datetime.now(timezone.utc)
+
+        # Generate 5 records using the same execution timestamp
         for _ in range(5):
             mock_records.append({
                 "product": random.choice(products),
@@ -42,7 +45,7 @@ def run_mock_ingestion():
                 "status": random.choice(statuses),
                 "source_ip": fake.ipv4(),
                 "user": fake.user_name(),
-                "timestamp": datetime.now(timezone.utc)  # Updated to fetch exact current time
+                "timestamp": run_timestamp  # Shared timestamp for the same day/run
             })
 
         print("Ingesting records into SecurityDB.logs...")
@@ -50,6 +53,7 @@ def run_mock_ingestion():
 
         print("------------------------------------------------")
         print(f"SUCCESS! Ingested {len(result.inserted_ids)} records into MongoDB!")
+        print(f"Run Timestamp: {run_timestamp}")
         print("------------------------------------------------")
 
     except Exception as e:
